@@ -86,56 +86,62 @@ export default function App() {
     const config = setoresConfig.find(s => s.id === setorAtivo);
     return (
       <div className="min-h-screen bg-white pb-10">
-        {/* Nav com Z-INDEX alto para cobrir tudo ao rolar */}
-        <nav className="p-4 border-b flex flex-col gap-4 bg-gray-50 sticky top-0 z-[100] shadow-sm">
+        {/* NAV COM Z-INDEX SUPER ALTO E ISOLAMENTO */}
+        <nav className="p-4 border-b flex flex-col gap-4 bg-gray-50 sticky top-0 z-[999] shadow-md">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
                 <button onClick={() => {setSetorAtivo(null); setSearchTerm('');}} className="p-2 hover:bg-gray-200 rounded-full transition"><ArrowLeft size={24} /></button>
-                <h1 className="text-xl font-black uppercase text-slate-800">{setorAtivo}</h1>
+                <h1 className="text-xl font-black uppercase text-slate-800 tracking-tighter">{setorAtivo}</h1>
             </div>
-            {isAdmin && <span className="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-lg uppercase">Admin</span>}
+            {isAdmin && <span className="px-2 py-1 bg-green-500 text-white text-[10px] font-black rounded-lg uppercase shadow-sm">Admin</span>}
           </div>
           
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                 <input 
                 type="text"
                 placeholder="Pesquisar..."
-                className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-2xl outline-none focus:border-blue-500 shadow-sm"
+                className="w-full pl-10 pr-4 py-3 bg-white border-2 border-gray-100 rounded-2xl outline-none focus:border-blue-500 shadow-sm"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
             <div className="flex gap-2">
-                <button onClick={isAdmin ? () => setIsAdmin(false) : fazerLogin} className="flex-1 border-2 border-slate-200 text-slate-600 p-3 rounded-2xl font-bold flex items-center justify-center gap-2 bg-white">
+                <button onClick={isAdmin ? () => setIsAdmin(false) : fazerLogin} className="flex-1 bg-white border-2 border-gray-100 text-slate-600 p-3 rounded-2xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-all">
                     {isAdmin ? <LogOut size={18}/> : <Lock size={18}/>}
                     {isAdmin ? 'Sair' : 'Entrar'}
                 </button>
-                <button onClick={() => isAdmin ? setModalAberto(true) : fazerLogin()} className="flex-1 bg-slate-900 text-white p-3 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg">
+                <button onClick={() => isAdmin ? setModalAberto(true) : fazerLogin()} className="flex-1 bg-slate-900 text-white p-3 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all">
                     <Plus size={20}/> Novo
                 </button>
             </div>
           </div>
         </nav>
 
-        <div className="p-4">
+        <div className="p-4 relative">
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {produtosFiltrados.map(item => (
-              <div key={item.id} className="group bg-white rounded-[32px] border border-gray-100 shadow-sm overflow-hidden relative flex flex-col">
-                <div className="aspect-square bg-gray-100 relative overflow-hidden">
+              <div key={item.id} className="bg-white rounded-[32px] border-2 border-gray-50 shadow-sm overflow-hidden flex flex-col relative">
+                
+                {/* CONTAINER DA IMAGEM COM RELATIVE PARA PRENDER OS BOTÕES */}
+                <div className="aspect-square bg-gray-50 relative group">
                     <img src={item.imagem} className="w-full h-full object-cover" alt={item.nome} />
                     
-                    {/* BOTÕES FIXADOS NO CARD: z-10 e dentro do relative do card */}
-                    <div className="absolute top-2 right-2 flex flex-col gap-2 z-10 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => isAdmin ? setItemParaEditar(item) : fazerLogin()} className="bg-white/95 p-2.5 rounded-full text-amber-500 shadow-lg active:scale-90 transition-transform"><Edit3 size={18} /></button>
-                        <button onClick={() => handleExcluir(item.id)} className="bg-white/95 p-2.5 rounded-full text-red-500 shadow-lg active:scale-90 transition-transform"><Trash2 size={18} /></button>
+                    {/* BOTÕES: md:opacity-0 para flutuar no PC, sempre visíveis no mobile */}
+                    <div className="absolute top-2 right-2 flex flex-col gap-2 z-20 md:opacity-0 md:group-hover:opacity-100 transition-all duration-200">
+                        <button onClick={() => isAdmin ? setItemParaEditar(item) : fazerLogin()} className="bg-white text-amber-500 p-2.5 rounded-full shadow-2xl border border-gray-100 active:scale-90">
+                            <Edit3 size={18} />
+                        </button>
+                        <button onClick={() => handleExcluir(item.id)} className="bg-white text-red-500 p-2.5 rounded-full shadow-2xl border border-gray-100 active:scale-90">
+                            <Trash2 size={18} />
+                        </button>
                     </div>
                 </div>
 
                 <div className="p-3 text-center flex-1 flex flex-col justify-between">
-                  <h3 className="font-bold text-slate-700 text-sm line-clamp-2 mb-2">{item.nome}</h3>
-                  <div className={`inline-block px-4 py-1.5 rounded-full font-black text-sm ${config.bg} ${config.color}`}>
+                  <h3 className="font-bold text-slate-800 text-xs md:text-sm line-clamp-2 mb-2 leading-tight">{item.nome}</h3>
+                  <div className={`inline-block px-4 py-1.5 rounded-full font-black text-xs md:text-sm ${config.bg} ${config.color}`}>
                     {item.qtd} un
                   </div>
                 </div>
@@ -144,19 +150,30 @@ export default function App() {
           </div>
         </div>
 
-        {/* Modal em camada superior máxima */}
+        {/* MODAL */}
         {(modalAberto || itemParaEditar) && (
-          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4 z-[200]">
-            <div className="bg-white w-full max-w-md rounded-t-[32px] md:rounded-[40px] p-6 md:p-8 shadow-2xl">
+          <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-end md:items-center justify-center p-0 md:p-4 z-[1000]">
+            <div className="bg-white w-full max-w-md rounded-t-[32px] md:rounded-[40px] p-6 md:p-8 shadow-2xl border-t-4 border-blue-600">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-black text-slate-800">{itemParaEditar ? 'Editar Item' : 'Novo Item'}</h2>
-                  <button className="p-2" onClick={() => {setModalAberto(false); setItemParaEditar(null);}}><X/></button>
+                  <h2 className="text-2xl font-black text-slate-800 tracking-tight">{itemParaEditar ? 'Editar Item' : 'Novo Item'}</h2>
+                  <button className="p-2 bg-gray-100 rounded-full" onClick={() => {setModalAberto(false); setItemParaEditar(null);}}><X/></button>
                 </div>
                 <form onSubmit={(e) => salvarProduto(e, itemParaEditar?.id)} className="space-y-4">
-                  <input required placeholder="Nome do Produto" className="w-full border-2 border-gray-100 p-4 rounded-2xl outline-none text-base focus:border-blue-500" value={itemParaEditar ? itemParaEditar.nome : novoItem.nome} onChange={e => itemParaEditar ? setItemParaEditar({...itemParaEditar, nome: e.target.value}) : setNovoItem({...novoItem, nome: e.target.value})} />
-                  <input type="number" required placeholder="Quantidade" className="w-full border-2 border-gray-100 p-4 rounded-2xl outline-none text-base focus:border-blue-500" value={itemParaEditar ? itemParaEditar.qtd : novoItem.qtd} onChange={e => itemParaEditar ? setItemParaEditar({...itemParaEditar, qtd: e.target.value}) : setNovoItem({...novoItem, qtd: e.target.value})} />
-                  <input placeholder="URL da Imagem" className="w-full border-2 border-gray-100 p-4 rounded-2xl outline-none text-base focus:border-blue-500" value={itemParaEditar ? itemParaEditar.imagem : novoItem.imagem} onChange={e => itemParaEditar ? setItemParaEditar({...itemParaEditar, imagem: e.target.value}) : setNovoItem({...novoItem, imagem: e.target.value})} />
-                  <button type="submit" className="w-full bg-blue-600 text-white font-black py-4 rounded-2xl mt-4 shadow-lg active:scale-95 transition-transform">SALVAR</button>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase ml-2">Nome do Produto</label>
+                    <input required className="w-full border-2 border-gray-100 p-4 rounded-2xl outline-none focus:border-blue-500 bg-gray-50" value={itemParaEditar ? itemParaEditar.nome : novoItem.nome} onChange={e => itemParaEditar ? setItemParaEditar({...itemParaEditar, nome: e.target.value}) : setNovoItem({...novoItem, nome: e.target.value})} />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase ml-2">Quantidade Atual</label>
+                    <input type="number" required className="w-full border-2 border-gray-100 p-4 rounded-2xl outline-none focus:border-blue-500 bg-gray-50" value={itemParaEditar ? itemParaEditar.qtd : novoItem.qtd} onChange={e => itemParaEditar ? setItemParaEditar({...itemParaEditar, qtd: e.target.value}) : setNovoItem({...novoItem, qtd: e.target.value})} />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase ml-2">Link da Imagem (Opcional)</label>
+                    <input className="w-full border-2 border-gray-100 p-4 rounded-2xl outline-none focus:border-blue-500 bg-gray-50" value={itemParaEditar ? itemParaEditar.imagem : novoItem.imagem} onChange={e => itemParaEditar ? setItemParaEditar({...itemParaEditar, imagem: e.target.value}) : setNovoItem({...novoItem, imagem: e.target.value})} />
+                  </div>
+                  <button type="submit" className="w-full bg-blue-600 text-white font-black py-5 rounded-2xl mt-4 shadow-xl active:scale-95 transition-all uppercase tracking-widest text-sm">
+                    {itemParaEditar ? 'Salvar Alterações' : 'Cadastrar Item'}
+                  </button>
                 </form>
             </div>
           </div>
@@ -165,26 +182,26 @@ export default function App() {
     );
   }
 
-  // TELA INICIAL (Setores) - Mantida para manter a fluidez
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
       <header className="text-center mb-10">
-        <div className="bg-blue-600 w-16 h-16 rounded-3xl flex items-center justify-center shadow-xl mx-auto mb-4 relative">
-          <LayoutGrid className="text-white" size={32} />
-          {isAdmin && <Unlock size={16} className="absolute -top-1 -right-1 text-green-400 bg-white rounded-full p-1 shadow" />}
+        <div className="bg-blue-600 w-20 h-20 rounded-[32px] flex items-center justify-center shadow-2xl mx-auto mb-6 relative">
+          <LayoutGrid className="text-white" size={40} />
+          {isAdmin && <Unlock size={20} className="absolute -top-1 -right-1 text-green-400 bg-white rounded-full p-1 shadow-md border-2 border-green-50" />}
         </div>
-        <h1 className="text-3xl font-black text-slate-900 mb-2 tracking-tighter uppercase">UPA QUIXADÁ</h1>
-        <div className="flex items-center justify-center gap-2">
-           <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">Gestão de Estoque</p>
-           {isAdmin && <button onClick={() => setIsAdmin(false)} className="text-[10px] bg-red-50 text-red-500 px-2 py-1 rounded-lg font-black uppercase">Sair</button>}
+        <h1 className="text-4xl font-black text-slate-900 mb-2 tracking-tighter uppercase">UPA QUIXADÁ</h1>
+        <div className="flex items-center justify-center gap-3">
+           <div className="h-[2px] w-8 bg-slate-200"></div>
+           <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.3em]">Gestão de Estoque</p>
+           <div className="h-[2px] w-8 bg-slate-200"></div>
         </div>
       </header>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
         {setoresConfig.map(setor => (
-          <button key={setor.id} onClick={() => setSetorAtivo(setor.id)} className="bg-white p-10 rounded-[48px] shadow-sm active:scale-95 transition-all flex flex-col items-center border border-gray-100 hover:shadow-xl group">
-            <div className={`${setor.bg} ${setor.color} p-7 rounded-[32px] mb-6 group-hover:scale-110 transition-transform`}>{setor.icon}</div>
-            <h2 className="text-xl font-black text-slate-800 capitalize mb-2">{setor.id}</h2>
-            <div className={`text-5xl font-black ${setor.color}`}>{totalPorSetor(setor.id)}</div>
+          <button key={setor.id} onClick={() => setSetorAtivo(setor.id)} className="bg-white p-12 rounded-[56px] shadow-sm active:scale-95 transition-all flex flex-col items-center border-2 border-transparent hover:border-gray-100 hover:shadow-2xl group">
+            <div className={`${setor.bg} ${setor.color} p-8 rounded-[40px] mb-6 group-hover:scale-110 transition-transform shadow-inner`}>{setor.icon}</div>
+            <h2 className="text-2xl font-black text-slate-800 capitalize mb-1 tracking-tight">{setor.id}</h2>
+            <div className={`text-6xl font-black ${setor.color} tracking-tighter`}>{totalPorSetor(setor.id)}</div>
           </button>
         ))}
       </div>
