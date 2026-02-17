@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from 'suparbaseClient'; 
+import { supabase } from "./supabaseClient"; 
 import { Package, Coffee, Shield, LayoutGrid, X, Plus, ArrowLeft, Trash2, Edit3, Search, Lock, Unlock, LogOut } from 'lucide-react';
 
 export default function App() {
