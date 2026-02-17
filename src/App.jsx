@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from './suparbaseClient';
+import { supabase } from 'supabaseClient'; 
 import { Package, Coffee, Shield, LayoutGrid, X, Plus, ArrowLeft, Trash2, Edit3, Search, Lock, Unlock, LogOut } from 'lucide-react';
 
 export default function App() {
@@ -9,13 +9,10 @@ export default function App() {
   const [modalAberto, setModalAberto] = useState(false);
   const [itemParaEditar, setItemParaEditar] = useState(null);
   const [novoItem, setNovoItem] = useState({ nome: '', qtd: '', imagem: '' });
-  
-  // NOVO: Estado para controlar se o usuário é Admin
   const [isAdmin, setIsAdmin] = useState(false);
 
   const SENHA_ACESSO = "794613";
 
-  // Função para fazer o "Login"
   const fazerLogin = () => {
     const senha = prompt("Digite a senha de administrador:");
     if (senha === SENHA_ACESSO) {
@@ -35,8 +32,6 @@ export default function App() {
 
   async function salvarProduto(e, id = null) {
     e.preventDefault();
-    
-    // Se não for admin, nem deixa prosseguir
     if (!isAdmin) {
       fazerLogin();
       return;
@@ -91,7 +86,8 @@ export default function App() {
     const config = setoresConfig.find(s => s.id === setorAtivo);
     return (
       <div className="min-h-screen bg-white pb-10">
-        <nav className="p-4 md:p-6 border-b flex flex-col md:flex-row gap-4 justify-between items-center bg-gray-50 sticky top-0 z-10">
+        {/* NAV CORRIGIDA: z-50 para ficar sempre no topo de tudo ao descer a tela */}
+        <nav className="p-4 md:p-6 border-b flex flex-col md:flex-row gap-4 justify-between items-center bg-gray-50 sticky top-0 z-50 shadow-sm">
           <div className="flex items-center gap-2 w-full md:w-auto">
             <button onClick={() => {setSetorAtivo(null); setSearchTerm('');}} className="p-2 hover:bg-gray-200 rounded-full transition"><ArrowLeft size={24} /></button>
             <h1 className="text-lg md:text-xl font-black uppercase text-slate-800 tracking-tight">{setorAtivo}</h1>
@@ -131,8 +127,8 @@ export default function App() {
               <div key={item.id} className="group bg-white rounded-[24px] md:rounded-[32px] border border-gray-100 shadow-sm overflow-hidden relative transition-all hover:shadow-md">
                 <div className="aspect-square bg-gray-100"><img src={item.imagem} className="w-full h-full object-cover" alt={item.nome} /></div>
                 
-                {/* Botões só funcionam se for admin */}
-                <div className="absolute top-2 right-2 flex flex-col gap-2 z-20 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
+                {/* BOTÕES CORRIGIDOS: z-10 para passarem por baixo do menu fixo */}
+                <div className="absolute top-2 right-2 flex flex-col gap-2 z-10 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
                   <button onClick={() => isAdmin ? setItemParaEditar(item) : fazerLogin()} className="bg-white/95 p-3 rounded-full text-amber-500 shadow-xl active:scale-90 transition-transform"><Edit3 size={18} /></button>
                   <button onClick={() => handleExcluir(item.id)} className="bg-white/95 p-3 rounded-full text-red-500 shadow-xl active:scale-90 transition-transform"><Trash2 size={18} /></button>
                 </div>
@@ -146,8 +142,9 @@ export default function App() {
           </div>
         </div>
 
+        {/* MODAL CORRIGIDO: z-[100] para estar acima de tudo */}
         {(modalAberto || itemParaEditar) && (
-          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4 z-50">
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4 z-[100]">
             <div className="bg-white w-full max-w-md rounded-t-[32px] md:rounded-[40px] shadow-2xl p-6 md:p-8">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-black text-slate-800">{itemParaEditar ? 'Editar Item' : 'Novo Item'}</h2>
